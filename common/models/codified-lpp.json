@@ -1,0 +1,27 @@
+{
+  "name": "CodifiedLPP",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "properties": {
+    "classification": {
+      "type": "string",
+      "comments": "Short LPP item description."
+    },
+    "code": {
+      "type": "number",
+      "id": true,
+      "required": true,
+      "comments": "AMELI code of the LPP item."
+    }
+  },
+  "validations": [],
+  "relations": {
+    "prices": {
+      "type": "hasMany",
+      "model": "Price",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": []
+}

@@ -1,0 +1,29 @@
+{
+  "name": "Price",
+  "plural": "Prices",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "properties": {
+    "price": {
+      "type": "number",
+      "required": true
+    },
+    "dateBegin": {
+      "type": "date",
+      "required": true
+    },
+    "dateEnd": {
+      "type": "date"
+    }
+  },
+  "validations": [],
+  "relations": {
+    "codifiedLPP": {
+      "type": "belongsTo",
+      "model": "CodifiedLPP",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": []
+}
