@@ -21,63 +21,71 @@ module.exports = function (app) {
      */
     myMiddleware: function (req, res) {
 
-      // Get the model
+      // Get the model class
       var CodifiedLPP = app.models.CodifiedLPP;
 
-      var lpp = new CodifiedLPP();
+      var file = req.files['upload-file'],
+          records = [],
+          cpt = 0;
 
-      lpp.code = 90123492;
-      lpp.classification = 'Insert #1.';
+      // Create a parser and attach it to the uploaded file
+      var parser = new Parser(file.path);
 
-      lpp.save(function (err, obj) {
-        res.send(err);
-      });
+      parser
+        .on('start', function () {
+          console.log('dBase file parsing has started. Start parsing the file header.');
+        })
+        .on('header', function () {
+          console.log('dBase file header has been parsed. Start parsing the records.');
+        })
+        .on('record', function (record) {
 
-      ////CodifiedLPP.create([
-      ////  {
-      ////    code:           90123495,
-      ////    classification: 'Random LPP item.',
-      ////    price:          '20',
-      ////    dateBegin:      '2015-02-07',
-      ////    dateEnd:        null
-      ////  }
-      ////], function (err, codifiedLPPList) {
-      ////
-      ////  if (err) {
-      ////    throw err;
-      ////  }
-      ////
-      ////  console.log('Models created: \n', codifiedLPPList);
-      ////});
-      //
-      //res.json(CodifiedLPP);
-      //console.log(CodifiedLPP);
-      //var records = [];
-      //
-      //var parser = new Parser(req.files['upload-file'].path);
-      //
-      //parser.on('start', function(p) {
-      //  console.log('dBase file parsing has started');
-      //});
-      //
-      //parser.on('header', function(h) {
-      //  console.log('dBase file header has been parsed');
-      //});
-      //
-      //parser.on('record', function(record) {
-      //  console.log('Record:\n');
-      //  console.log(record);
-      //  records.push(record);
-      //});
-      //
-      //parser.on('end', function(p) {
-      //  console.log('Finished parsing the dBase file');
-      //  res.json(records);
-      //});
-      //
-      //parser.parse();
+          cpt++;
 
+          var lpp = new CodifiedLPP();
 
+          lpp.code = record[this.header.fields[0].name];
+          lpp.classification = record[this.header.fields[1].name];
+
+          records.push(lpp);
+        })
+        .on('end', function (p) {
+          console.log('Finished parsing the dBase file. Parsed ' + cpt + ' records.');
+
+          var errs = [];
+
+          var cpt2 = 0;
+
+          for (var k in records) {
+
+            var record = records[k];
+
+            console.log('Upsert record #' + cpt2);
+            cpt2++;
+
+            CodifiedLPP.upsert(record, function (err) {
+
+              if (err) {
+                errs.push({
+                  record: record,
+                  err:    err
+                });
+              }
+            });
+          }
+
+          while (cpt2 !== cpt) {
+            //wait
+          }
+
+          res.json({
+            file:    file.originalname,
+            date:    Date.now(),
+            records: records,
+            err:     errs
+          });
+        });
+      parser.parse();
     }
   }
 };
