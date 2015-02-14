@@ -8,6 +8,9 @@ var app = module.exports = loopback();
 boot(app, __dirname);
 
 app.start = function() {
+
+  'use strict';
+
   // start the web server
   return app.listen(function() {
     app.emit('started');

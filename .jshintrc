@@ -16,6 +16,7 @@
   "undef": true,
   "unused": false,
   "trailing": true,
+  "strict": true,
   "sub": true,
-  "maxlen": 80
+  "maxlen": 120
 }
