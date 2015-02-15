@@ -10,6 +10,11 @@ var fs = require('fs');
  */
 var bytes = require('bytes');
 
+/**
+ * Handle the upload of dBase files for populating the LPP items.
+ *
+ * @return {Function}
+ */
 module.exports = function() {
 
   'use strict';
@@ -69,16 +74,16 @@ module.exports = function() {
    */
   Form.prototype.isValid = function() {
 
-    this.err = [];
+    this.err = '';
 
     // Check if the required data is there
     if (this.data.file === undefined) {
-      this.err.push('No file found.');
+      this.err = 'No file found.';
 
       return false;
     }
     if (this.data.type === '') {
-      this.err.push('File type not specified.');
+      this.err = 'File type not specified.';
 
       return false;
     }
@@ -140,7 +145,6 @@ module.exports = function() {
      */
     var targetPath = __dirname + '/../files/' + filename;
 
-
     //
     // Save the file.
     //
@@ -169,7 +173,7 @@ module.exports = function() {
           name: filename,
           size: bytes(form.data.file.size),
           bytes: form.data.file.size,
-          mime_type: form.data.file.mimetype
+          mimeType: form.data.file.mimetype
         });
       });
     });

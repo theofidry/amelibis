@@ -7,7 +7,14 @@ module.exports = function(CodifiedLPP) {
 
   'use strict';
 
-  CodifiedLPP.importdBase = function(cb) {
+  CodifiedLPP.importFromFile = function(cb) {
+
 
   };
+
+  CodifiedLPP.remoteMethod('import', {
+    //accepts: {arg: 'filter', type: 'object'},
+    //returns: {arg: 'stats', type: 'object'},
+    http: { path: '/import' }
+  }, CodifiedLPP.importFromFile);
 };
