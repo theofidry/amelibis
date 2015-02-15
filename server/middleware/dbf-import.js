@@ -5,32 +5,36 @@
  */
 var Parser = require('node-dbf');
 
-
 /**
+ * Helper for handing the LPP dBase files.
  *
- * @param {App} app LoopBackApplication object
- *
- * @return {Object}
+ * @returns {{uploadLPPCodes: Function}}
  */
-module.exports = function(app) {
+module.exports = function() {
 
   'use strict';
-
-  // Get the model class
-  var CodifiedLPP = app.models.CodifiedLPP;
 
   return {
 
     /**
+     * Extract all the records from the uploaded file and upsert the LPP items accordingly.
+     *
      * @param {!Object} req Express request object.
      * @param {!Object} res Express response object.
-     *
+     * @param {function({
+            file: string,
+            records: number,
+            err: Array.string
+          })=} cb Callback function (optional).
      */
-    uploadLPPCodes: function(req, res) {
+    uploadLPPCodes: function(req, res, cb) {
 
       var uploadedFile = req.files['upload-file'],
         lppList = [],
         cpt = 0; // number of records
+
+      // Get the model class
+      var CodifiedLPP = req.app.models.CodifiedLPP;
 
       // Create a parser and attach it to the uploaded file
       var parser = new Parser(uploadedFile.path);
@@ -52,20 +56,28 @@ module.exports = function(app) {
         })
         .on('end', function() {
 
+          // Upsert the records retrieved and return a feedback object.
           console.log('Finished parsing the dBase file. Parsed ' + cpt + ' records.');
 
           var cbCpt = 0,  // upsert counter
-            errs = [];
+            errs = [];  // array of errors caused by upsert for each instance
 
-          // Upsert all records.
-          for (var k in lppList) {
-
-            var lpp = lppList[k];
-
-            console.log('Upsert record #' + cbCpt);
-            cbCpt++;
+          /**
+           * Upsert the instance passed and increment the counter passed.
+           *
+           * If an error occurred, the error is pushed to the error array passed.
+           *
+           * @private
+           *
+           * @param {!CodifiedLPP} lpp Class instance.
+           * @param {!Array} errs Array of errors.
+           * @param {!number} cpt Counter.
+           */
+          var upsert = function(lpp, errs, cpt) {
 
             CodifiedLPP.upsert(lpp, function(err, data) {
+
+              cpt++;
 
               if (err) {
                 errs.push({
@@ -74,13 +86,22 @@ module.exports = function(app) {
                 });
               }
             });
+          };
+
+          // Upsert all records.
+          for (var k in lppList) {
+
+            var lpp = lppList[k];
+            console.log('Upsert record #' + k);
+            upsert(lpp, errs, cbCpt);
           }
 
+          // Wait for all upsert to finish
           while (cbCpt !== cpt) {
             //wait
           }
 
-          res.json({
+          return cb({
             file: uploadedFile.originalname,
             records: lppList.length,
             err: errs

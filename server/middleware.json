@@ -11,10 +11,13 @@
   },
   "parse": {
     "body-parser#json": {},
-    "multer": {}
+    "multer": {
+      "params": {
+        "dest:": "./files"
+      }
+    }
   },
-  "routes": {
-  },
+  "routes": {},
   "files": {
     "loopback#static": {
       "params": "$!../client"
