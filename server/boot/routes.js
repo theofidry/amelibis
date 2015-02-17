@@ -11,10 +11,21 @@ module.exports = function(app) {
 
   'use strict';
 
-  // Get Express router middleware
+  // Disable the header 'X-Powered-By Express'.
+  app.disable('x-powered-by');
+  app.use(function(req, res, next) {
+    res.removeHeader('x-powered-by');
+    next();
+  });
+
+  // Get Express Router middleware.
   var router = app.loopback.Router();
 
+  //
+  // Custom routes
+  //
   router.post('/upload', dbfUpload);
 
+  // Set the application Router.
   app.use(router);
 };
