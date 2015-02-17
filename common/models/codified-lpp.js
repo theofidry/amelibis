@@ -31,23 +31,27 @@ module.exports = function(CodifiedLPP) {
 
   'use strict';
 
+  CodifiedLPP.sourceFile = __dirname + '/../../client/files/CodifiedLPP.dbf';
+
   //CodifiedLPP.importFromFile = function(cb) {
   //
   //
   //};
-  //
+
+  /**
+   * Return data about the source file.
+   * @param {Function} cb Callback.
+   */
   CodifiedLPP.getSourceFileInfo = function(cb) {
 
-    var file = __dirname + '/../../server/files/CodifiedLPP.dbf';
-
-    fs.stat(file, function(err, stats) {
+    fs.stat(CodifiedLPP.sourceFile, function(err, stats) {
 
       if (err) {
         cb(err);
       } else {
         cb(null, {
-          name: path.basename(file),
-          mimeType: mime.lookup(file),
+          name: path.basename(CodifiedLPP.sourceFile),
+          mimeType: mime.lookup(CodifiedLPP.sourceFile),
           size: bytes(stats.size),
           bytes: stats.size,
           uploaded: stats.ctime
@@ -56,10 +60,25 @@ module.exports = function(CodifiedLPP) {
     });
   };
 
-  //CodifiedLPP.getFile = function(cb) {
-  //
-  //};
-  //
+  /**
+   * Return the source file.
+   *
+   * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
+   *
+   * @param {Function} cb Callback.
+   */
+  CodifiedLPP.getSourceFile = function(cb) {
+    cb(null);
+  };
+
+  /**
+   * Remote hook: return the source file.
+   */
+  CodifiedLPP.afterRemote('getSourceFile', function(ctx, modelInstance, next) {
+
+    ctx.res.download(CodifiedLPP.sourceFile);
+  });
+
   //CodifiedLPP.remoteMethod('synchronize', {
   //  http: {path: '/synchronize', verb: 'get'}
   //}, CodifiedLPP.importFromFile);
@@ -71,7 +90,7 @@ module.exports = function(CodifiedLPP) {
 
   CodifiedLPP.remoteMethod('getSourceFile', {
     http: {path: '/getSourceFile', verb: 'get'}
-  }, CodifiedLPP.getFile);
+  });
 
   //
   //CodifiedLPP.greet = function(cb) {
