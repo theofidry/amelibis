@@ -20,7 +20,7 @@
   "relations": {
     "codifiedLPP": {
       "type": "belongsTo",
-      "model": "CodifiedLPP",
+      "model": "CodifiedLPPItem",
       "foreignKey": ""
     }
   },

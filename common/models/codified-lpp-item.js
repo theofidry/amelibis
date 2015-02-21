@@ -31,9 +31,9 @@ var path = require('path');
 /**
  * Extend or override model's behavior.
  *
- * @param {!Object} CodifiedLPP Model's class.
+ * @param {!Object} CodifiedLPPItem Model's class.
  */
-module.exports = function(CodifiedLPP) {
+module.exports = function(CodifiedLPPItem) {
 
   'use strict';
 
@@ -47,12 +47,12 @@ module.exports = function(CodifiedLPP) {
    * LPP source file.
    * @type {string}
    */
-  CodifiedLPP.sourceFile = __dirname + '/../../client/files/CodifiedLPP.dbf';
+  CodifiedLPPItem.sourceFile = __dirname + '/../../client/files/CodifiedLPP.dbf';
 
   /**
    * @static
    */
-  CodifiedLPP.upsertAllHelper = {
+  CodifiedLPPItem.upsertAllHelper = {
     /**
      * Number of records upserted during the last call.
      * @type {number}
@@ -76,12 +76,12 @@ module.exports = function(CodifiedLPP) {
      */
     upsertCb: function(err, data) {
       if (err) {
-        CodifiedLPP.upsertAllHelper.errors.push({
+        CodifiedLPPItem.upsertAllHelper.errors.push({
           record: data,
           error: err
         });
       }
-      CodifiedLPP.upsertAllHelper.addUpsert();
+      CodifiedLPPItem.upsertAllHelper.addUpsert();
     },
     /**
      * Reset.
@@ -97,28 +97,28 @@ module.exports = function(CodifiedLPP) {
    * The callback function takes two parameters:
    *  The number of upserted element.
    *  An array of errors that occurred.
-   * @param {![CodifiedLPP]} lppList Array of codified LPP items.
+   * @param {![CodifiedLPPItem]} lppList Array of codified LPP items.
    * @param {Function(number, Array)=} cb Callback.
    */
-  CodifiedLPP.upsertAll = function(lppList, cb) {
+  CodifiedLPPItem.upsertAll = function(lppList, cb) {
+
+    cb = (typeof cb === 'function')? cb: function() {};
 
     // Clear data of the previous upsert.
-    CodifiedLPP.upsertAllHelper.reset();
+    CodifiedLPPItem.upsertAllHelper.reset();
 
     // Upsert all records.
     for (var k in lppList) {
-      CodifiedLPP.upsert(lppList[k], CodifiedLPP.upsertAllHelper.upsertCb);
+      CodifiedLPPItem.upsert(lppList[k], CodifiedLPPItem.upsertAllHelper.upsertCb);
     }
 
     // Wait for all upsert to finish.
     // Check every given time if the number of records upserted is good the expected number.
     // An interval is used instead of a while because of concurrency problems.
     setInterval(function() {
-      if (CodifiedLPP.upsertAllHelper.upserted === lppList.length && cb) {
-        if (cb) {
-          clearInterval(this);
-          cb(CodifiedLPP.upsertAllHelper.upserted, CodifiedLPP.upsertAllHelper.errors);
-        }
+      if (CodifiedLPPItem.upsertAllHelper.upserted === lppList.length && cb) {
+        clearInterval(this);
+        cb(CodifiedLPPItem.upsertAllHelper.upserted, CodifiedLPPItem.upsertAllHelper.errors);
       }
     }, 100);
   };
@@ -128,10 +128,12 @@ module.exports = function(CodifiedLPP) {
    *
    * @param {!remoteMethodCallback} cb Callback.
    */
-  CodifiedLPP.importSourceFile = function(cb) {
+  CodifiedLPPItem.importSourceFile = function(cb) {
+
+    cb = (typeof cb === 'function')? cb: function() {};
 
     // Create a parser and attach it to the source file
-    var parser = new Parser(CodifiedLPP.sourceFile);
+    var parser = new Parser(CodifiedLPPItem.sourceFile);
 
     var lppList = [],
       cpt = 0; // counter; number of records
@@ -149,7 +151,7 @@ module.exports = function(CodifiedLPP) {
         cpt++;
 
         // Extract LPP data from record
-        var lpp = new CodifiedLPP();
+        var lpp = new CodifiedLPPItem();
         lpp.code = record[this.header.fields[0].name];
         lpp.classification = record[this.header.fields[1].name];
 
@@ -160,7 +162,7 @@ module.exports = function(CodifiedLPP) {
         // Upsert the records retrieved and return a feedback object.
         console.log('[importSourceFile] Finished parsing the dBase file. Parsed ' + cpt + ' records. Update records.');
 
-        CodifiedLPP.upsertAll(lppList, function(count, errors) {
+        CodifiedLPPItem.upsertAll(lppList, function(count, errors) {
 
           console.log('[importSourceFile] Records updated');
           cb(null, {
@@ -178,16 +180,18 @@ module.exports = function(CodifiedLPP) {
    *
    * @param {!remoteMethodCallback} cb Callback.
    */
-  CodifiedLPP.getSourceFileInfo = function(cb) {
+  CodifiedLPPItem.getSourceFileInfo = function(cb) {
 
-    fs.stat(CodifiedLPP.sourceFile, function(err, stats) {
+    cb = (typeof cb === 'function')? cb: function() {};
+
+    fs.stat(CodifiedLPPItem.sourceFile, function(err, stats) {
 
       if (err) {
         cb(err);
       } else {
         cb(null, {
-          name: path.basename(CodifiedLPP.sourceFile),
-          mimeType: mime.lookup(CodifiedLPP.sourceFile),
+          name: path.basename(CodifiedLPPItem.sourceFile),
+          mimeType: mime.lookup(CodifiedLPPItem.sourceFile),
           size: bytes(stats.size),
           bytes: stats.size,
           uploaded: stats.ctime
@@ -203,32 +207,34 @@ module.exports = function(CodifiedLPP) {
    *
    * @param {!remoteMethodCallback} cb Callback.
    */
-  CodifiedLPP.getSourceFile = function(cb) {
+  CodifiedLPPItem.getSourceFile = function(cb) {
+
+    cb = (typeof cb === 'function')?cb: function() {};
     cb(null);
   };
 
   /**
    * Remote hook: return the source file.
    */
-  CodifiedLPP.afterRemote('getSourceFile', function(ctx, modelInstance, next) {
+  CodifiedLPPItem.afterRemote('getSourceFile', function(ctx, modelInstance, next) {
 
-    ctx.res.download(CodifiedLPP.sourceFile);
+    ctx.res.download(CodifiedLPPItem.sourceFile);
   });
 
   //
   // Register remote methods.
   //
-  CodifiedLPP.remoteMethod('importSourceFile', {
+  CodifiedLPPItem.remoteMethod('importSourceFile', {
     returns: {root: true},
     http: {path: '/synchronize', verb: 'get'}
   });
 
-  CodifiedLPP.remoteMethod('getSourceFileInfo', {
+  CodifiedLPPItem.remoteMethod('getSourceFileInfo', {
     returns: {root: true},
     http: {path: '/getSourceFileInfo', verb: 'get'}
   });
 
-  CodifiedLPP.remoteMethod('getSourceFile', {
+  CodifiedLPPItem.remoteMethod('getSourceFile', {
     http: {path: '/getSourceFile', verb: 'get'}
   });
 };

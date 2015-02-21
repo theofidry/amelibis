@@ -26,11 +26,11 @@
     "dataSource": "db",
     "public": false
   },
-  "CodifiedLPP": {
+  "Price": {
     "dataSource": "amelibis",
     "public": true
   },
-  "Price": {
+  "CodifiedLPPItem": {
     "dataSource": "amelibis",
     "public": true
   }

@@ -1,5 +1,6 @@
 {
-  "name": "CodifiedLPP",
+  "name": "CodifiedLPPItem",
+  "plural": "CodifiedLPP",
   "base": "PersistedModel",
   "idInjection": true,
   "properties": {
