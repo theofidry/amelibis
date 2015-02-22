@@ -17,6 +17,7 @@ deploy:
   domain: tfidry
   on:
     repo: theofidry/amelibis
+  deployment_branch: deploy
 
 notifications:
   email:
