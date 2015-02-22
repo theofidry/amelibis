@@ -8,11 +8,15 @@ node_js:
   - 'iojs'
   - 'iojs-v1.0.4'
 
+before_script:
+  # Install JSHint
+  - npm install -g jshint
+
 deploy:
   provider: openshift
   user: theo.fidry@gmail.com
   password:
-    secure: dUf62DTPLDW/Xl/2NcJ12C12yl4UBa52GlrSgjJ511C3TB0alUJ/+M1ZI3nKqRt6xfRvXWnJ2Qh5P+leTD5TmZfeN5gDzFDkJ6tv3asMl9HsCs5iZUdT93FTVkU0I1eeI/J/S2nzdWIfRy/FRF7Gjg2evRcofMv0VwU1b0IW8cM=
+      secure: s1rGf2kwXpvcwMBtsDJBN1yaWS/urpwGGWrTdO8MMMkQTYk2vHvFP5/lM26CtYnX8YqYU5dJry4M8v5A+hJ4cUQpOxn2lW1+3/50Rlrf+SqMBxGUP1DR6KyQ32ysQaqICeOP+cFVkjYvh2rmaXzZ6kGNJTomgn+wgbDlsuR8DoE=
   app: amelibis
   domain: tfidry
   on:

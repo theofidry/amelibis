@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server/server.js",
   "scripts": {
-    "pretest": "jshint . && gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules",
+    "lint": "jshint . && gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules",
     "start": "slc run"
   },
   "dependencies": {
