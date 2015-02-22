@@ -11,9 +11,6 @@ node_js:
 before_script:
   # Install JSHint
   - npm install -g jshint
-  # Install Google Closure Linter
-  - apt-get install python-pip
-  - pip install https://closure-linter.googlecode.com/svn/trunk/
 
 deploy:
   provider: openshift
