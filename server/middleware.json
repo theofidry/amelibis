@@ -11,11 +11,7 @@
   },
   "parse": {
     "body-parser#json": {},
-    "multer": {
-      "params": {
-        "dest:": "./files"
-      }
-    }
+    "multer": {}
   },
   "routes": {},
   "files": {

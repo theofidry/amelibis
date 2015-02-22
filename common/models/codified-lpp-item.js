@@ -213,6 +213,15 @@ module.exports = function(CodifiedLPPItem) {
     cb(null);
   };
 
+  CodifiedLPPItem.destroyAllInstances = function(cb) {
+
+    cb = (typeof cb === 'function')?cb: function() {};
+
+    CodifiedLPPItem.destroyAll(null, function() {
+      cb(null);
+    });
+  };
+
   /**
    * Remote hook: return the source file.
    */
@@ -236,5 +245,9 @@ module.exports = function(CodifiedLPPItem) {
 
   CodifiedLPPItem.remoteMethod('getSourceFile', {
     http: {path: '/getSourceFile', verb: 'get'}
+  });
+
+  CodifiedLPPItem.remoteMethod('destroyAllInstances', {
+    http: {path: '/', verb: 'delete'}
   });
 };

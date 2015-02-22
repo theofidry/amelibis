@@ -143,7 +143,7 @@ module.exports = function() {
      * Path to which the file will be moved.
      * @type {string}
      */
-    var targetPath = __dirname + '/../files/' + filename;
+    var targetPath = __dirname + '/../../client/files/' + filename;
 
     //
     // Save the file.
