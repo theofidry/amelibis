@@ -1,8 +1,4 @@
 {
-  "db": {
-    "name": "db",
-    "connector": "memory"
-  },
   "amelibis": {
     "host": "localhost",
     "port": 3306,
