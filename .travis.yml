@@ -11,6 +11,13 @@ node_js:
 before_script:
   # Install JSHint
   - npm install -g jshint
+  # Install Google JsLint
+  - sudo apt-get install python-pip
+  - sudo pip install https://closure-linter.googlecode.com/svn/trunk/g
+after_script:
+  - slc build --install --commit
+  - git checkout deploy
+  - git push origin deploy
 
 deploy:
   provider: openshift
@@ -21,7 +28,7 @@ deploy:
   domain: tfidry
   on:
     repo: theofidry/amelibis
-  deployment_branch: deploy
+  deployment_branch: origin/deploy
 
 notifications:
   email:
