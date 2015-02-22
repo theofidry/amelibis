@@ -17,6 +17,7 @@ before_script:
   - sudo apt-get install python-pip
   - sudo pip install https://closure-linter.googlecode.com/svn/trunk/
 after_script:
+  - git fetch origin
   - slc build --install --commit
   - git checkout deploy
   - git push origin deploy
