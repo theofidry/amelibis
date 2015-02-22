@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "server/server.js",
   "scripts": {
-    "pretest": "jshint . && gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules"
+    "pretest": "jshint . && gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules",
+    "start": "slc run"
   },
   "dependencies": {
     "body-parser": "^1.11.0",
