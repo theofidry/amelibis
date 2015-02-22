@@ -27,12 +27,12 @@ deploy:
   provider: openshift
   user: theo.fidry@gmail.com
   password:
-      secure: s1rGf2kwXpvcwMBtsDJBN1yaWS/urpwGGWrTdO8MMMkQTYk2vHvFP5/lM26CtYnX8YqYU5dJry4M8v5A+hJ4cUQpOxn2lW1+3/50Rlrf+SqMBxGUP1DR6KyQ32ysQaqICeOP+cFVkjYvh2rmaXzZ6kGNJTomgn+wgbDlsuR8DoE=
+      secure: qPque+u0M532dsaSoeOEMyIyFBnBucFGVg1IpYZqagsX+FLWeAbKRqjGf4K6KPz5veuW3OVkykKn6b09oaiuwGskMNsDvTXBram20w23bkmeYXxQ54dTnhSbgsriDsdiVGcBYJ5Ok1fwwBPBstfMTWLqXEddkQwKk4S1VDFov90=
   app: amelibis
   domain: tfidry
   on:
     repo: theofidry/amelibis
-  deployment_branch: origin/deploy
+  deployment_branch: deploy
 
 notifications:
   email:
