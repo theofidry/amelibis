@@ -9,6 +9,8 @@ node_js:
   - 'iojs-v1.0.4'
 
 before_script:
+  # Install StrongLoop
+  - npm install -g strongloop
   # Install JSHint
   - npm install -g jshint
   # Install Google JsLint
