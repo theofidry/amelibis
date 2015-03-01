@@ -153,7 +153,7 @@ module.exports = function(CodifiedLPPItem) {
         // Extract LPP data from record.
         var lpp = new CodifiedLPPItem({
           code: record[this.header.fields[0].name],
-          classification:record[this.header.fields[1].name]
+          classification: record[this.header.fields[1].name]
         });
 
         lppList.push(lpp);
@@ -210,7 +210,7 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.getSourceFile = function(cb) {
 
-    cb = (typeof cb === 'function')?cb: function() {};
+    cb = (typeof cb === 'function')? cb: function() {};
     cb(null);
   };
 
@@ -221,11 +221,39 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.destroyAllInstances = function(cb) {
 
-    cb = (typeof cb === 'function')?cb: function() {};
+    cb = (typeof cb === 'function')? cb: function() {};
 
-    CodifiedLPPItem.destroyAll(null, function() {
+    CodifiedLPPItem.destroyAll(null, function(err) {
       cb(null);
     });
+  };
+
+  /**
+   * Overwrite the default get to provide relations data too.
+   * @param cb
+   */
+  CodifiedLPPItem.getAllInstances = function(cb) {
+
+    cb = (typeof cb === 'function')? cb: function() {};
+
+    CodifiedLPPItem.find({
+        limit: 2,
+        include: {
+          relation: 'prices',
+          scope: {
+            fields: ['id', 'price', 'dateBegin', 'dateEnd']
+          }
+        }
+      },
+      function(err, instances) {
+
+        if (err) {
+          cb(err);
+        } else {
+          cb(null, instances);
+        }
+      }
+    );
   };
 
   /**
@@ -236,12 +264,16 @@ module.exports = function(CodifiedLPPItem) {
     ctx.res.download(CodifiedLPPItem.sourceFile);
   });
 
-  //
-  // Register remote methods.
-  //
-  CodifiedLPPItem.remoteMethod('importSourceFile', {
-    returns: {root: true},
-    http: {path: '/synchronize', verb: 'get'}
+//
+// Register remote methods.
+//
+  CodifiedLPPItem.remoteMethod('destroyAllInstances', {
+    http: {path: '/', verb: 'delete'}
+  });
+
+  CodifiedLPPItem.remoteMethod('getAllInstances', {
+    http: {path: '/test', verb: 'get'},
+    returns: {arg: 'entities', type: 'Array'}
   });
 
   CodifiedLPPItem.remoteMethod('getSourceFileInfo', {
@@ -253,7 +285,9 @@ module.exports = function(CodifiedLPPItem) {
     http: {path: '/getSourceFile', verb: 'get'}
   });
 
-  CodifiedLPPItem.remoteMethod('destroyAllInstances', {
-    http: {path: '/', verb: 'delete'}
+  CodifiedLPPItem.remoteMethod('importSourceFile', {
+    returns: {root: true},
+    http: {path: '/synchronize', verb: 'get'}
   });
-};
+}
+;

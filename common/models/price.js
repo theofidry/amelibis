@@ -263,10 +263,9 @@ module.exports = function(Price) {
   //
   // Register remote methods.
   //
-  Price.remoteMethod('importSourceFile', {
-    returns: {root: true},
-    http: {path: '/synchronize', verb: 'get'}
-  });
+  //Price.remoteMethod('destroyAllInstances', {
+  //  http: {path: '/', verb: 'delete'}
+  //});
 
   Price.remoteMethod('getSourceFileInfo', {
     returns: {root: true},
@@ -277,7 +276,8 @@ module.exports = function(Price) {
     http: {path: '/getSourceFile', verb: 'get'}
   });
 
-  Price.remoteMethod('destroyAllInstances', {
-    http: {path: '/', verb: 'delete'}
+  Price.remoteMethod('importSourceFile', {
+    returns: {root: true},
+    http: {path: '/synchronize', verb: 'get'}
   });
 };
