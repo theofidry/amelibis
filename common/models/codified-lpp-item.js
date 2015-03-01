@@ -132,11 +132,11 @@ module.exports = function(CodifiedLPPItem) {
 
     cb = (typeof cb === 'function')? cb: function() {};
 
-    // Create a parser and attach it to the source file
+    // Create a parser and attach it to the source file.
     var parser = new Parser(CodifiedLPPItem.sourceFile);
 
     var lppList = [],
-      cpt = 0; // counter; number of records
+      cpt = 0; // counter; number of records.
 
     parser
       .on('start', function() {
@@ -147,13 +147,14 @@ module.exports = function(CodifiedLPPItem) {
       })
       .on('record', function(record) {
 
-        // Increment counter
+        // Increment counter.
         cpt++;
 
-        // Extract LPP data from record
-        var lpp = new CodifiedLPPItem();
-        lpp.code = record[this.header.fields[0].name];
-        lpp.classification = record[this.header.fields[1].name];
+        // Extract LPP data from record.
+        var lpp = new CodifiedLPPItem({
+          code: record[this.header.fields[0].name],
+          classification:record[this.header.fields[1].name]
+        });
 
         lppList.push(lpp);
       })
@@ -213,6 +214,11 @@ module.exports = function(CodifiedLPPItem) {
     cb(null);
   };
 
+  /**
+   * Destroy all instances.
+   *
+   * @param {!remoteMethodCallback} cb
+   */
   CodifiedLPPItem.destroyAllInstances = function(cb) {
 
     cb = (typeof cb === 'function')?cb: function() {};

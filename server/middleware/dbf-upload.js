@@ -20,6 +20,7 @@ module.exports = function() {
   'use strict';
 
   /**
+   * Form handler. Use to retrieve and form data from the request.
    *
    * @constructor
    */
@@ -49,7 +50,7 @@ module.exports = function() {
   }
 
   /**
-   * Retrieve the form data submitted in the request.
+   * Retrieve the form data submitted in the request.s
    *
    * @param {!Object} req The Express Request object.
    */
@@ -59,9 +60,16 @@ module.exports = function() {
 
     switch (req.body.type) {
 
+      // List of all LPP items.
       case '0':
         this.data.type = 'CodifiedLPP';
         break;
+
+      // List of prices with period validity.
+      case '1':
+        this.data.type = 'CodifiedLPPHistory';
+        break;
+
       default:
       //do nothing
     }
@@ -74,26 +82,31 @@ module.exports = function() {
    */
   Form.prototype.isValid = function() {
 
+    // Reset form error field.
     this.err = '';
 
-    // Check if the required data is there
+    //
+    // Check if the required data is there.
+    //
+    // Check if the file is here.
     if (this.data.file === undefined) {
       this.err = 'No file found.';
 
       return false;
     }
+    // Check if the file type is specified.
     if (this.data.type === '') {
       this.err = 'File type not specified.';
 
       return false;
     }
 
-    // Check the file extension
+    // Check the file extension.
     if (this.data.file.extension !== 'dbf') {
       return false;
     }
 
-    // Form data is valid
+    // Form data is valid.
     return true;
   };
 
@@ -103,7 +116,7 @@ module.exports = function() {
 
     var form = new Form();
 
-    // Get the data submitted by the form request
+    // Get the data submitted by the form request.
     form.handleRequest(req);
 
     // Check if there is a file present in the request.
@@ -160,7 +173,7 @@ module.exports = function() {
 
       console.log('[dbfUpload] Moved file from ' + tmpPath + ' to ' + targetPath);
 
-      // Delete the temporary file
+      // Delete the temporary file.
       fs.unlink(tmpPath, function() {
 
         if (err) {
