@@ -264,11 +264,15 @@ module.exports = function(CodifiedLPPItem) {
     ctx.res.download(CodifiedLPPItem.sourceFile);
   });
 
-//
-// Register remote methods.
-//
+
+  //
+  // Register remote methods.
+  //
   CodifiedLPPItem.remoteMethod('destroyAllInstances', {
-    http: {path: '/', verb: 'delete'}
+    description: 'Delete all matching records',
+    accessType: 'WRITE',
+    accepts: {arg: 'where', type: 'object', description: 'filter.where object'},
+    http: {verb: 'del', path: '/'}
   });
 
   CodifiedLPPItem.remoteMethod('getAllInstances', {
