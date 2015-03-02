@@ -7,5 +7,10 @@
  */
 module.exports = function(app) {
 
-  app.dataSources.amelibis.autoupdate();
+  app.dataSources.amelibis.autoupdate(null, function(err) {
+
+    if (err) {
+      console.log(err);
+    }
+  });
 };
