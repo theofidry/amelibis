@@ -53,6 +53,7 @@ module.exports = function() {
    * Retrieve the form data submitted in the request.s
    *
    * @param {!Object} req The Express Request object.
+   * @returns {Form}
    */
   Form.prototype.handleRequest = function(req) {
 
@@ -73,6 +74,8 @@ module.exports = function() {
       default:
       //do nothing
     }
+
+    return this;
   };
 
   /**
