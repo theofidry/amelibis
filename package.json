@@ -1,5 +1,5 @@
 {
-  "name": "AmeliBis",
+  "name": "amelibis",
   "version": "0.0.1",
   "bin": "server/server.js",
   "main": "server/server.js",
