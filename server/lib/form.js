@@ -8,37 +8,46 @@
 function Form() {
 
   /**
-   * @type {{file: Document.uploadFile|undefined, type: *}}
+   * @type {
+   *  {
+   *    file: Object|null,
+   *    type: string|null
+   *    }
+   *  }
    */
   this.data = {
     /**
      * Submitted file.
-     * @type {Document.uploadFile|undefined}
+     * @type {Object|null}
      */
-    file: undefined,
+    file: null,
     /**
      * Type of the file.
-     * @type {string}
+     * @type {string|null}
      */
-    type: ''
+    type: null
   };
 
   /**
    * Error message returned by the form validation.
-   * @type {string}
+   * @type {string|null}
    */
-  this.err = '';
+  this.err = null;
 }
 
 /**
- * Retrieve the form data submitted in the request.s
+ * Retrieve the form data submitted in the request.
+ *
+ * Expect:
+ *  {string}       req.files.uploadFile Path to uploaded file.
+ *  {(string)0, 1} req.data.type        0 for LPP items, 1 for LPP history
  *
  * @param {!Object} req The Express Request object.
- * @returns {Form}
+ * @returns {Form} instance
  */
 Form.prototype.handleRequest = function(req) {
 
-  this.data.file = req.files.uploadFile;
+  this.data.file = req.files.uploadFile || null;
 
   switch (req.body.type) {
 
@@ -53,7 +62,7 @@ Form.prototype.handleRequest = function(req) {
       break;
 
     default:
-    //do nothing
+      this.data.type = null;
   }
 
   return this;
@@ -67,19 +76,19 @@ Form.prototype.handleRequest = function(req) {
 Form.prototype.isValid = function() {
 
   // Reset form error field.
-  this.err = '';
+  this.err = null;
 
   //
   // Check if the required data is there.
   //
   // Check if the file is here.
-  if (this.data.file === undefined) {
+  if (!this.data.file) {
     this.err = 'No file found.';
 
     return false;
   }
   // Check if the file type is specified.
-  if (this.data.type === '') {
+  if (!this.data.type) {
     this.err = 'File type not specified.';
 
     return false;
@@ -87,6 +96,8 @@ Form.prototype.isValid = function() {
 
   // Check the file extension.
   if (this.data.file.extension !== 'dbf') {
+    this.err = 'Expected dBase (.dbf) file.';
+
     return false;
   }
 
