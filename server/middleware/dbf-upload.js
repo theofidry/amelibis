@@ -26,9 +26,8 @@ function dbfUpload(req, res, next) {
 
   console.log('[dbfUpload] Request to upload a file made.');
 
-  var form = new Form();
-
   // Get the data submitted by the form request.
+  var form = new Form();
   form.handleRequest(req);
 
   //
