@@ -14,6 +14,8 @@ before_script:
   # Install Google JsLint
   - sudo apt-get install python-pip
   - sudo pip install https://closure-linter.googlecode.com/svn/trunk/
+  # Create build directory
+  - mkdir build
 before_deploy:
   - git fetch origin
   - slc build --install --commit

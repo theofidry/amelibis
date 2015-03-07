@@ -7,6 +7,8 @@
  */
 module.exports = function(app) {
 
+  'use strict';
+
   app.dataSources.amelibis.autoupdate(null, function(err) {
 
     if (err) {
