@@ -68,7 +68,7 @@ module.exports = function(Price) {
       return null;
     }
 
-    return new Date(date.substring(0, 4), date.substring(4, 6), date.substring(6))
+    return new Date(date.substring(0, 4), date.substring(4, 6), date.substring(6));
   };
 
   /**

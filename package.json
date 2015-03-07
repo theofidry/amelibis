@@ -6,9 +6,11 @@
   "scripts": {
     "code-analysis": "plato -r -d build/plato-report server common client -l .jshintrc",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R test/**/*-test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./build/coverage",
-    "lint": "jshint . && gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules",
+    "gjslint": "gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules,build",
+    "jslint": "jshint .",
+    "mocha": "./node_modules/mocha/bin/mocha test -R doc > build/spec.html --recursive --check-leaks",
     "start": "slc run",
-    "test": "./node_modules/mocha/bin/mocha test -R doc > build/spec.html --recursive --check-leaks"
+    "test": "npm run mocha && npm run code-analysis && npm run jslint"
   },
   "dependencies": {
     "body-parser": "^1.11.0",

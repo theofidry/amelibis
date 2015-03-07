@@ -24,6 +24,8 @@ var Form = require(__dirname + '/../lib/form.js');
  */
 function dbfUpload(req, res, next) {
 
+  'use strict';
+
   console.log('[dbfUpload] Request to upload a file made.');
 
   // Get the data submitted by the form request.
@@ -101,6 +103,8 @@ function dbfUpload(req, res, next) {
  * @return {Function}
  */
 module.exports = function() {
+
+  'use strict';
 
   return dbfUpload;
 };
