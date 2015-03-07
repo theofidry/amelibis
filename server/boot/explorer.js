@@ -1,8 +1,14 @@
+/**
+ * Native synchronous boot script.
+ *
+ * @param {App} server StrongLoop application object.
+ */
 module.exports = function mountLoopBackExplorer(server) {
 
   'use strict';
 
   var explorer;
+
   try {
     explorer = require('loopback-explorer');
   } catch(err) {

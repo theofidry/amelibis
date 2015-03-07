@@ -1,10 +1,16 @@
 {
-  "name": "AmeliBis",
-  "version": "1.0.0",
+  "name": "amelibis",
+  "version": "0.0.1",
+  "bin": "server/server.js",
   "main": "server/server.js",
   "scripts": {
-    "lint": "jshint . && gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules",
-    "start": "slc run"
+    "code-analysis": "plato -r -d build/plato-report server common client -l .jshintrc",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R test/**/*-test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./build/coverage",
+    "gjslint": "gjslint --flagfile=gslint.conf -r . --exclude_directories=node_modules,build",
+    "jslint": "jshint .",
+    "mocha": "./node_modules/mocha/bin/mocha test -R doc > build/spec.html --recursive --check-leaks",
+    "start": "slc run",
+    "test": "npm run mocha && npm run code-analysis && npm run jslint"
   },
   "dependencies": {
     "body-parser": "^1.11.0",
@@ -13,7 +19,7 @@
     "errorhandler": "^1.1.1",
     "loopback": "^2.8.0",
     "loopback-boot": "^2.4.0",
-    "loopback-connector-mysql": "^1.5.1",
+    "loopback-connector-mongodb": "^1.8.0",
     "loopback-datasource-juggler": "^2.7.0",
     "mime": "^1.3.4",
     "multer": "^0.1.7",
@@ -24,11 +30,33 @@
     "loopback-explorer": "^1.1.0"
   },
   "devDependencies": {
-    "jshint": "^2.5.6"
+    "jshint": "^2.5.6",
+    "mocha": "^2.1.0",
+    "node-mocks-http": "^1.2.4",
+    "unit.js": "^1.1.3"
   },
   "repository": {
-    "type": "",
-    "url": ""
+    "type": "git",
+    "url": "https://github.com/theofidry/amelibis"
   },
-  "description": "AmeliBis"
+  "maintainers": [
+    {
+      "name": "Théo FIDRY",
+      "email": "theo.fidry@gmail.com",
+      "github": "https://github.com/theofidry"
+    },
+    {
+      "name": "Sacha MASSON",
+      "email": "vorak67@gmail.com",
+      "github": "https://github.com/vowow"
+    }
+  ],
+  "description": "Web application for handling AMELI LPP items.",
+  "license": {
+    "name": "GNU",
+    "url": "https://github.com/theofidry/amelibis/blob/master/LICENSE"
+  },
+  "engines": {
+    "node": ">=0.10.3"
+  }
 }

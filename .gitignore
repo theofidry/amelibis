@@ -1,5 +1,9 @@
 # Upload file dir
 server/files
+client/files
+
+# Build artefacts
+build
 
 # Created by https://www.gitignore.io
 

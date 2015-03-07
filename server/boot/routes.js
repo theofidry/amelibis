@@ -1,3 +1,6 @@
+/**
+ * Middleware to handle upload of dBase file.
+ */
 var dbfUpload = require('../middleware/dbf-upload.js')();
 
 /**
