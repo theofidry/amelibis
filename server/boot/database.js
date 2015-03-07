@@ -1,7 +1,7 @@
 /**
  * Synchronous boot script.
  *
- * Update the the database.
+ * Update the database schema.
  *
  * @param {App} app StrongLoop application object.
  */
