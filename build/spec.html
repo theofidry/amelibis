@@ -1,0 +1,142 @@
+    <section class="suite">
+      <h1>Test Form class.</h1>
+      <dl>
+        <dt>test Form.isValid()</dt>
+        <dd><pre><code>var k;
+    for (k in requestsWithValidData) {
+      if (requestsWithValidData.hasOwnProperty(k)) {
+        form.handleRequest(requestsWithValidData[k]);
+        test.assert(form.isValid() === true &amp;&amp; form.err === null, 'Expected valid form with no errors.');
+      }
+    }
+    for (k in requestsWithInvalidData) {
+      if (requestsWithInvalidData.hasOwnProperty(k)) {
+        form.handleRequest(requestsWithInvalidData[k]);
+        test.assert(
+          form.isValid() === false &amp;&amp; typeof form.err === 'string' &amp;&amp; form.err.length &gt; 0,
+          'Expected invalid form with errors.' + form.data.file + form.data.type);
+      }
+    }</code></pre></dd>
+        <section class="suite">
+          <h1>test Form properties</h1>
+          <dl>
+            <dt>implements fluent interface</dt>
+            <dd><pre><code>var returnedForm = form.handleRequest(HttpMocks.createRequest());
+      test.assert.deepEqual(form, returnedForm, 'Expected handleRequest() to return this.');</code></pre></dd>
+            <section class="suite">
+              <h1>test Form.data.file property</h1>
+              <dl>
+                <dt>must be null if file not found</dt>
+                <dd><pre><code>var invalidFiles = invalidFilesProvider();
+        for (var k in invalidFiles) {
+          if (invalidFiles.hasOwnProperty(k)) {
+            var files = invalidFiles[k];
+            if (!files.uploadFile) {
+              form.handleRequest(HttpMocks.createRequest({files: files}));
+              test.assert(form.data.file === null, 'Expected property to be null.');
+            }
+          }
+        }</code></pre></dd>
+                <dt>must be an object if file found</dt>
+                <dd><pre><code>var validFiles = validFilesProvider();
+        for (var k in validFiles) {
+          if (validFiles.hasOwnProperty(k)) {
+            form.handleRequest(HttpMocks.createRequest({files: validFiles[k]}));
+            test.assert(typeof form.data.file === 'object', 'Expected property to be an object.');
+          }
+        }</code></pre></dd>
+                <dt>must be null if file not found even if was previously not null</dt>
+                <dd><pre><code>for (var k in requestsWithValidData) {
+          if (requestsWithValidData.hasOwnProperty(k)) {
+            form.handleRequest(requestsWithValidData[k]);
+            for (var l in requestsWithInvalidData) {
+              if (requestsWithInvalidData.hasOwnProperty(l)) {
+                var request = requestsWithInvalidData[l];
+                delete request.files.uploadFile;
+                form.handleRequest(request);
+                test.assert(form.data.file === null, 'Expected null file property.');
+              }
+            }
+          }
+        }</code></pre></dd>
+              </dl>
+            </section>
+            <section class="suite">
+              <h1>test Form.data.type property</h1>
+              <dl>
+                <dt>must be null if type not acknowledge</dt>
+                <dd><pre><code>var invalidFileTypes = invalidFileTypesProvider();
+        for (var k in invalidFileTypes) {
+          if (invalidFileTypes.hasOwnProperty(k)) {
+            form.handleRequest(HttpMocks.createRequest({body: {type: invalidFileTypes[k]}}));
+            test.assert(form.data.type === null, 'Expected property to be null.');
+          }
+        }</code></pre></dd>
+                <dt>must be non empty string if type correct</dt>
+                <dd><pre><code>for (var k in requestsWithValidData) {
+          if (requestsWithValidData.hasOwnProperty(k)) {
+            form.handleRequest(requestsWithValidData[k]);
+            test.assert(typeof form.data.type === 'string' &amp;&amp; form.data.type.length &gt; 0,
+              'Expected property to be a non empty string.');
+          }
+        }</code></pre></dd>
+                <dt>must be null if type not correct even if was previously correct</dt>
+                <dd><pre><code>var invalidFileTypes = invalidFileTypesProvider();
+        for (var k in requestsWithValidData) {
+          if (requestsWithValidData.hasOwnProperty(k)) {
+            form.handleRequest(requestsWithValidData[k]);
+            for (var l in invalidFileTypes) {
+              if (invalidFileTypes.hasOwnProperty(l)) {
+                form.handleRequest(HttpMocks.createRequest({body: {type: invalidFileTypes[l]}}));
+                test.assert(form.data.type === null, 'Expected property to be null.');
+              }
+            }
+          }
+        }</code></pre></dd>
+              </dl>
+            </section>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>test Form.handleRequest()</h1>
+          <dl>
+            <dt>retrieves uploaded file named uploadedFile if exists</dt>
+            <dd><pre><code>var validFiles = validFilesProvider(),
+        invalidFiles = invalidFilesProvider(),
+        k;
+      for (k in validFiles) {
+        if (validFiles.hasOwnProperty(k)) {
+          form.handleRequest(HttpMocks.createRequest({files: validFiles[k]}));
+          test.assert(typeof form.data.file === 'object', 'Expected to find file in form data.');
+        }
+      }
+      for (k in invalidFiles) {
+        if (invalidFiles.hasOwnProperty(k)) {
+          var files = invalidFiles[k];
+          if (!files.uploadFile) {
+            form.handleRequest(HttpMocks.createRequest({files: files}));
+            test.assert(form.data.file === null, 'Did not expect to find file in form data.');
+          }
+        }
+      }</code></pre></dd>
+            <dt>retrieves file type</dt>
+            <dd><pre><code>var validFileTypes = validFileTypesProvider(),
+        invalidFileTypes = invalidFileTypesProvider(),
+        k;
+      for (k in validFileTypes) {
+        if (validFileTypes.hasOwnProperty(k)) {
+          form.handleRequest(HttpMocks.createRequest({body: {type: validFileTypes[k]}}));
+          test.assert(typeof form.data.type === 'string' &amp;&amp; form.data.type.length &gt; 0,
+            'Expected to find type in form data.');
+        }
+      }
+      for (k in invalidFileTypes) {
+        if (invalidFileTypes.hasOwnProperty(k)) {
+          form.handleRequest(HttpMocks.createRequest({body: {type: invalidFileTypes[k]}}));
+          test.assert(form.data.type === null, 'Did not expected to find type in form data.');
+        }
+      }</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - common/models/price.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>common/models/price.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">74.27</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">279</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">32.06</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">1.45</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">/**
+ * StrongLoop application object.
+ * @type {exports}
+ */
+var app = require(&#039;../../server/server&#039;);
+
+/**
+ * Bytes Parser &amp; Formatter.
+ * @type {exports}
+ */
+var bytes = require(&#039;bytes&#039;);
+
+/**
+ * File System object.
+ * @type {exports}
+ */
+var fs = require(&#039;fs&#039;);
+
+/**
+ * MIME type mapping API.
+ * @type {Mime|exports}
+ */
+var mime = require(&#039;mime&#039;);
+
+/**
+ * dBase file parser class.
+ * @type {Parser|exports}
+ */
+var Parser = require(&#039;node-dbf&#039;);
+
+/**
+ * Contains utilities for handling and transforming file paths.
+ * @type {exports}
+ */
+var path = require(&#039;path&#039;);
+
+/**
+ * Extend or override model&#039;s behavior.
+ *
+ * @param {!Object} Price Model&#039;s class.
+ */
+module.exports = function(Price) {
+
+  &#039;use strict&#039;;
+
+  /**
+   * @callback remoteMethodCallback
+   * @param {?Object} Error object.
+   * @param {Object=} Returned data object.
+   */
+
+  /**
+   * LPP history source file.
+   * @type {string}
+   */
+  Price.sourceFile = __dirname + &#039;/../../client/files/CodifiedLPPHistory.dbf&#039;;
+
+  /**
+   * Helper to extract a Date object from the string date given by AMELI.
+   *
+   * @param {string=} date
+   * @returns {?Date}
+   */
+  Price.parseAmeliDate = function(date) {
+
+    // Expect string date in format YYYYMMDD
+    if (typeof date !== &#039;string&#039; || date.length !== 8) {
+      return null;
+    }
+
+    return new Date(date.substring(0, 4), date.substring(4, 6), date.substring(6));
+  };
+
+  /**
+   * @static
+   */
+  Price.upsertAllHelper = {
+    /**
+     * Number of records upserted during the last call.
+     * @type {number}
+     */
+    upserted: 0,
+    /**
+     * List of errors that may have occurred during the last upsert.
+     * @type {Array}
+     */
+    errors: [],
+    /**
+     * Increment the number of record upserted by one.
+     */
+    addUpsert: function() {
+      this.upserted++;
+    },
+    /**
+     * Function used as a callback for updated the upserted and errors objects after an upsert.
+     * @param {?Object} err
+     * @param {!Object} data
+     */
+    upsertCb: function(err, data) {
+      if (err) {
+        Price.upsertAllHelper.errors.push({
+          record: data,
+          error: err
+        });
+      }
+      Price.upsertAllHelper.addUpsert();
+    },
+    /**
+     * Reset.
+     */
+    reset: function() {
+      this.upserted = 0;
+      this.errors = [];
+    }
+  };
+
+  /**
+   * Upsert all the elements of the given list.
+   * The callback function takes two parameters:
+   *  The number of upserted element.
+   *  An array of errors that occurred.
+   * @param {![Price]} lppHistoList Array of codified LPP items.
+   * @param {Function(number, Array)=} cb Callback.
+   */
+  Price.upsertAll = function(lppHistoList, cb) {
+
+    cb = (typeof cb === &#039;function&#039;)? cb: function() {};
+
+    // Clear data of the previous upsert.
+    Price.upsertAllHelper.reset();
+
+    // Upsert all records.
+    for (var k in lppHistoList) {
+      Price.upsert(lppHistoList[k], Price.upsertAllHelper.upsertCb);
+    }
+
+    // Wait for all upsert to finish.
+    // Check every given time if the number of records upserted is good the expected number.
+    // An interval is used instead of a while because of concurrency problems.
+    setInterval(function() {
+      if (Price.upsertAllHelper.upserted === lppHistoList.length &amp;&amp; cb) {
+        clearInterval(this);
+        cb(Price.upsertAllHelper.upserted, Price.upsertAllHelper.errors);
+      }
+    }, 100);
+  };
+
+  /**
+   * Import the LPP history items from the source file.
+   *
+   * @param {!remoteMethodCallback} cb Callback.
+   */
+  Price.importSourceFile = function(cb) {
+
+    cb = (typeof cb === &#039;function&#039;)? cb: function() {};
+
+    // Create a parser and attach it to the source file.
+    var parser = new Parser(Price.sourceFile);
+
+    var lppHistoList = [],
+      cpt = 0; // counter; number of records.
+
+    parser
+      .on(&#039;start&#039;, function() {
+        console.log(&#039;[importSourceFile] dBase file parsing has started. Start parsing the file header.&#039;);
+      })
+      .on(&#039;header&#039;, function() {
+        console.log(&#039;[importSourceFile] dBase file header has been parsed. Start parsing the records.&#039;);
+      })
+      .on(&#039;record&#039;, function(record) {
+
+        // Increment counter.
+        cpt++;
+
+        // Extract LPP history data from record.
+        var lppHisto = new Price({
+          codifiedLPPItemId: record[this.header.fields[0].name],
+          price: record[this.header.fields[8].name],
+          dateBegin: Price.parseAmeliDate(record[this.header.fields[1].name]),
+          dateEnd: Price.parseAmeliDate(record[this.header.fields[2].name])
+        });
+
+        lppHistoList.push(lppHisto);
+      })
+      .on(&#039;end&#039;, function() {
+
+        // Upsert the records retrieved and return a feedback object.
+        console.log(&#039;[importSourceFile] Finished parsing the dBase file. Parsed &#039; + cpt + &#039; records. Update records.&#039;);
+
+        Price.upsertAll(lppHistoList, function(count, errors) {
+
+          console.log(&#039;[importSourceFile] Records updated&#039;);
+          cb(null, {
+            records: count,
+            errors: errors
+          });
+        });
+      });
+
+    parser.parse();
+  };
+
+  /**
+   * Return data about the source file.
+   *
+   * @param {!remoteMethodCallback} cb Callback.
+   */
+  Price.getSourceFileInfo = function(cb) {
+
+    cb = (typeof cb === &#039;function&#039;)? cb: function() {};
+
+    fs.stat(Price.sourceFile, function(err, stats) {
+
+      if (err) {
+        cb(err);
+      } else {
+        cb(null, {
+          name: path.basename(Price.sourceFile),
+          mimeType: mime.lookup(Price.sourceFile),
+          size: bytes(stats.size),
+          bytes: stats.size,
+          uploaded: stats.ctime
+        });
+      }
+    });
+  };
+
+  /**
+   * Return the source file.
+   *
+   * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
+   *
+   * @param {!remoteMethodCallback} cb Callback.
+   */
+  Price.getSourceFile = function(cb) {
+
+    cb = (typeof cb === &#039;function&#039;)? cb: function() {};
+    cb(null);
+  };
+
+  /**
+   * Destroy all instances.
+   *
+   * @param {!remoteMethodCallback} cb
+   */
+  Price.destroyAllInstances = function(cb) {
+
+    cb = (typeof cb === &#039;function&#039;)? cb: function() {};
+
+    Price.destroyAll(null, function() {
+      cb(null);
+    });
+  };
+
+  /**
+   * Remote hook: return the source file.
+   */
+  Price.afterRemote(&#039;getSourceFile&#039;, function(ctx, modelInstance, next) {
+
+    ctx.res.download(Price.sourceFile);
+  });
+
+  //
+  // Register remote methods.
+  //
+  //Price.remoteMethod(&#039;destroyAllInstances&#039;, {
+  //  http: {path: &#039;/&#039;, verb: &#039;delete&#039;}
+  //});
+
+  Price.remoteMethod(&#039;getSourceFileInfo&#039;, {
+    returns: {root: true},
+    http: {path: &#039;/getSourceFileInfo&#039;, verb: &#039;get&#039;}
+  });
+
+  Price.remoteMethod(&#039;getSourceFile&#039;, {
+    http: {path: &#039;/getSourceFile&#039;, verb: &#039;get&#039;}
+  });
+
+  Price.remoteMethod(&#039;importSourceFile&#039;, {
+    returns: {root: true},
+    http: {path: &#039;/synchronize&#039;, verb: &#039;get&#039;}
+  });
+};</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ complexity.cyclomatic }} <br>
+    Length : {{ complexity.halstead.length }} <br>
+    Difficulty : {{ complexity.halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ complexity.halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
