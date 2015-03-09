@@ -215,11 +215,10 @@ module.exports = function(CodifiedLPPItem) {
   /**
    * Destroy all instances.
    *
+   * @param {Object=} params Optional where filter.
    * @param {!remoteMethodCallback} cb
    */
   CodifiedLPPItem.destroyAllInstances = function(params, cb) {
-
-    console.log(params);
 
     CodifiedLPPItem.destroyAll(params, function(err) {
       cb(err, null);
@@ -265,15 +264,21 @@ module.exports = function(CodifiedLPPItem) {
   });
 
   CodifiedLPPItem.remoteMethod('getSourceFileInfo', {
+    description: 'Get source file data',
+    accessType: 'READ',
     returns: {root: true},
-    http: {path: '/getSourceFileInfo', verb: 'get'}
+    http: {path: '/getSourceFileData', verb: 'get'}
   });
 
   CodifiedLPPItem.remoteMethod('getSourceFile', {
+    description: 'Get the source file',
+    accessType: 'READ',
     http: {path: '/getSourceFile', verb: 'get'}
   });
 
   CodifiedLPPItem.remoteMethod('importSourceFile', {
+    description: 'Import all CodifiedLPP items from the source file',
+    accessType: 'WRITE',
     returns: {root: true},
     http: {path: '/synchronize', verb: 'get'}
   });

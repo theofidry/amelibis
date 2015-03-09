@@ -241,14 +241,13 @@ module.exports = function(Price) {
   /**
    * Destroy all instances.
    *
+   * @param {Object=} params Optional where filter.
    * @param {!remoteMethodCallback} cb
    */
-  Price.destroyAllInstances = function(cb) {
+  Price.destroyAllInstances = function(params, cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
-    Price.destroyAll(null, function() {
-      cb(null);
+    Price.destroyAll(params, function(err) {
+      cb(err, null);
     });
   };
 
@@ -263,20 +262,28 @@ module.exports = function(Price) {
   //
   // Register remote methods.
   //
-  //Price.remoteMethod('destroyAllInstances', {
-  //  http: {path: '/', verb: 'delete'}
-  //});
+  Price.remoteMethod('destroyAllInstances', {
+    description: 'Delete all matching records',
+    accessType: 'WRITE',
+    http: {path: '/', verb: 'delete'}
+  });
 
   Price.remoteMethod('getSourceFileInfo', {
+    description: 'Get source file data',
+    accessType: 'READ',
     returns: {root: true},
-    http: {path: '/getSourceFileInfo', verb: 'get'}
+    http: {path: '/getSourceFileData', verb: 'get'}
   });
 
   Price.remoteMethod('getSourceFile', {
+    description: 'Get the source file',
+    accessType: 'READ',
     http: {path: '/getSourceFile', verb: 'get'}
   });
 
   Price.remoteMethod('importSourceFile', {
+    description: 'Import all prices from the source file',
+    accessType: 'WRITE',
     returns: {root: true},
     http: {path: '/synchronize', verb: 'get'}
   });
