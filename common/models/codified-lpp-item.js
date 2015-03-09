@@ -102,8 +102,6 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.upsertAll = function(lppList, cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     // Clear data of the previous upsert.
     CodifiedLPPItem.upsertAllHelper.reset();
 
@@ -129,8 +127,6 @@ module.exports = function(CodifiedLPPItem) {
    * @param {!remoteMethodCallback} cb Callback.
    */
   CodifiedLPPItem.importSourceFile = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
 
     // Create a parser and attach it to the source file.
     var parser = new Parser(CodifiedLPPItem.sourceFile);
@@ -183,8 +179,6 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.getSourceFileInfo = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     fs.stat(CodifiedLPPItem.sourceFile, function(err, stats) {
 
       if (err) {
@@ -202,6 +196,38 @@ module.exports = function(CodifiedLPPItem) {
   };
 
   /**
+   * Destroy all instances.
+   *
+   * @param {Object=} params Optional where filter.
+   * @param {!remoteMethodCallback} cb
+   */
+  CodifiedLPPItem.destroyAllInstances = function(params, cb) {
+
+    CodifiedLPPItem.destroyAll(params, function(err) {
+      cb(err);
+    });
+  };
+
+  // Overrides the find function
+  CodifiedLPPItem.on('attached', function() {
+
+    var overridden = CodifiedLPPItem.find;
+    CodifiedLPPItem.find = function(filter, callback) {
+
+      filter = filter || {};
+      filter.include = {
+        relation: 'prices',
+        scope: {
+          fields: ['id', 'price', 'dateBegin', 'dateEnd']
+        }
+      };
+      arguments[0] = filter;
+
+      return overridden.apply(this, arguments);
+    };
+  });
+
+  /**
    * Return the source file.
    *
    * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
@@ -209,59 +235,14 @@ module.exports = function(CodifiedLPPItem) {
    * @param {!remoteMethodCallback} cb Callback.
    */
   CodifiedLPPItem.getSourceFile = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
-    cb(null);
-  };
-
-  /**
-   * Destroy all instances.
-   *
-   * @param {!remoteMethodCallback} cb
-   */
-  CodifiedLPPItem.destroyAllInstances = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
-
-    CodifiedLPPItem.destroyAll(null, function(err) {
-      cb(null);
-    });
-  };
-
-  /**
-   * Overwrite the default get to provide relations data too.
-   * @param cb
-   */
-  CodifiedLPPItem.getAllInstances = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
-
-    CodifiedLPPItem.find({
-        limit: 2,
-        include: {
-          relation: 'prices',
-          scope: {
-            fields: ['id', 'price', 'dateBegin', 'dateEnd']
-          }
-        }
-      },
-      function(err, instances) {
-
-        if (err) {
-          cb(err);
-        } else {
-          cb(null, instances);
-        }
-      }
-    );
+    cb();
   };
 
   /**
    * Remote hook: return the source file.
    */
   CodifiedLPPItem.afterRemote('getSourceFile', function(ctx, modelInstance, next) {
-
-    ctx.res.download(CodifiedLPPItem.sourceFile);
+    ctx.res.download(CodifiedLPPItem.sourceFile, path.basename(CodifiedLPPItem.sourceFile));
   });
 
 
@@ -275,21 +256,22 @@ module.exports = function(CodifiedLPPItem) {
     http: {verb: 'del', path: '/'}
   });
 
-  CodifiedLPPItem.remoteMethod('getAllInstances', {
-    http: {path: '/test', verb: 'get'},
-    returns: {arg: 'entities', type: 'Array'}
-  });
-
   CodifiedLPPItem.remoteMethod('getSourceFileInfo', {
+    description: 'Get source file data',
+    accessType: 'READ',
     returns: {root: true},
-    http: {path: '/getSourceFileInfo', verb: 'get'}
+    http: {path: '/getSourceFileData', verb: 'get'}
   });
 
   CodifiedLPPItem.remoteMethod('getSourceFile', {
+    description: 'Get the source file',
+    accessType: 'READ',
     http: {path: '/getSourceFile', verb: 'get'}
   });
 
   CodifiedLPPItem.remoteMethod('importSourceFile', {
+    description: 'Import all CodifiedLPP items from the source file',
+    accessType: 'WRITE',
     returns: {root: true},
     http: {path: '/synchronize', verb: 'get'}
   });

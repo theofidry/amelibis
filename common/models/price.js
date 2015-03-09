@@ -152,8 +152,6 @@ module.exports = function(Price) {
    */
   Price.importSourceFile = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     // Create a parser and attach it to the source file.
     var parser = new Parser(Price.sourceFile);
 
@@ -207,8 +205,6 @@ module.exports = function(Price) {
    */
   Price.getSourceFileInfo = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     fs.stat(Price.sourceFile, function(err, stats) {
 
       if (err) {
@@ -226,6 +222,19 @@ module.exports = function(Price) {
   };
 
   /**
+   * Destroy all instances.
+   *
+   * @param {Object=} params Optional where filter.
+   * @param {!remoteMethodCallback} cb
+   */
+  Price.destroyAllInstances = function(params, cb) {
+
+    Price.destroyAll(params, function(err) {
+      cb(err, null);
+    });
+  };
+
+  /**
    * Return the source file.
    *
    * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
@@ -233,50 +242,41 @@ module.exports = function(Price) {
    * @param {!remoteMethodCallback} cb Callback.
    */
   Price.getSourceFile = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
-    cb(null);
-  };
-
-  /**
-   * Destroy all instances.
-   *
-   * @param {!remoteMethodCallback} cb
-   */
-  Price.destroyAllInstances = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
-
-    Price.destroyAll(null, function() {
-      cb(null);
-    });
+    cb();
   };
 
   /**
    * Remote hook: return the source file.
    */
   Price.afterRemote('getSourceFile', function(ctx, modelInstance, next) {
-
-    ctx.res.download(Price.sourceFile);
+    ctx.res.download(Price.sourceFile, path.basename(Price.sourceFile));
   });
 
   //
   // Register remote methods.
   //
-  //Price.remoteMethod('destroyAllInstances', {
-  //  http: {path: '/', verb: 'delete'}
-  //});
+  Price.remoteMethod('destroyAllInstances', {
+    description: 'Delete all matching records',
+    accessType: 'WRITE',
+    http: {path: '/', verb: 'delete'}
+  });
 
   Price.remoteMethod('getSourceFileInfo', {
+    description: 'Get source file data',
+    accessType: 'READ',
     returns: {root: true},
-    http: {path: '/getSourceFileInfo', verb: 'get'}
+    http: {path: '/getSourceFileData', verb: 'get'}
   });
 
   Price.remoteMethod('getSourceFile', {
+    description: 'Get the source file',
+    accessType: 'READ',
     http: {path: '/getSourceFile', verb: 'get'}
   });
 
   Price.remoteMethod('importSourceFile', {
+    description: 'Import all prices from the source file',
+    accessType: 'WRITE',
     returns: {root: true},
     http: {path: '/synchronize', verb: 'get'}
   });
