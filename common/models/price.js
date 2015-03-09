@@ -1,10 +1,4 @@
 /**
- * StrongLoop application object.
- * @type {exports}
- */
-var app = require('../../server/server');
-
-/**
  * Bytes Parser & Formatter.
  * @type {exports}
  */
