@@ -128,8 +128,6 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.importSourceFile = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     // Create a parser and attach it to the source file.
     var parser = new Parser(CodifiedLPPItem.sourceFile);
 
@@ -181,8 +179,6 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.getSourceFileInfo = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     fs.stat(CodifiedLPPItem.sourceFile, function(err, stats) {
 
       if (err) {
@@ -200,19 +196,6 @@ module.exports = function(CodifiedLPPItem) {
   };
 
   /**
-   * Return the source file.
-   *
-   * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
-   *
-   * @param {!remoteMethodCallback} cb Callback.
-   */
-  CodifiedLPPItem.getSourceFile = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
-    cb(null);
-  };
-
-  /**
    * Destroy all instances.
    *
    * @param {Object=} params Optional where filter.
@@ -221,7 +204,7 @@ module.exports = function(CodifiedLPPItem) {
   CodifiedLPPItem.destroyAllInstances = function(params, cb) {
 
     CodifiedLPPItem.destroyAll(params, function(err) {
-      cb(err, null);
+      cb(err);
     });
   };
 
@@ -245,11 +228,21 @@ module.exports = function(CodifiedLPPItem) {
   });
 
   /**
+   * Return the source file.
+   *
+   * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
+   *
+   * @param {!remoteMethodCallback} cb Callback.
+   */
+  CodifiedLPPItem.getSourceFile = function(cb) {
+    cb();
+  };
+
+  /**
    * Remote hook: return the source file.
    */
   CodifiedLPPItem.afterRemote('getSourceFile', function(ctx, modelInstance, next) {
-
-    ctx.res.download(CodifiedLPPItem.sourceFile);
+    ctx.res.download(CodifiedLPPItem.sourceFile, path.basename(CodifiedLPPItem.sourceFile));
   });
 
 

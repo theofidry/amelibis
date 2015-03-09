@@ -152,8 +152,6 @@ module.exports = function(Price) {
    */
   Price.importSourceFile = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     // Create a parser and attach it to the source file.
     var parser = new Parser(Price.sourceFile);
 
@@ -207,8 +205,6 @@ module.exports = function(Price) {
    */
   Price.getSourceFileInfo = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     fs.stat(Price.sourceFile, function(err, stats) {
 
       if (err) {
@@ -226,19 +222,6 @@ module.exports = function(Price) {
   };
 
   /**
-   * Return the source file.
-   *
-   * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
-   *
-   * @param {!remoteMethodCallback} cb Callback.
-   */
-  Price.getSourceFile = function(cb) {
-
-    cb = (typeof cb === 'function')? cb: function() {};
-    cb(null);
-  };
-
-  /**
    * Destroy all instances.
    *
    * @param {Object=} params Optional where filter.
@@ -252,11 +235,21 @@ module.exports = function(Price) {
   };
 
   /**
+   * Return the source file.
+   *
+   * This requires to access to the context, so this method is empty and the rest is handled in the remote hook.
+   *
+   * @param {!remoteMethodCallback} cb Callback.
+   */
+  Price.getSourceFile = function(cb) {
+    cb();
+  };
+
+  /**
    * Remote hook: return the source file.
    */
   Price.afterRemote('getSourceFile', function(ctx, modelInstance, next) {
-
-    ctx.res.download(Price.sourceFile);
+    ctx.res.download(Price.sourceFile, path.basename(Price.sourceFile));
   });
 
   //
