@@ -102,8 +102,6 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.upsertAll = function(lppList, cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     // Clear data of the previous upsert.
     CodifiedLPPItem.upsertAllHelper.reset();
 
@@ -221,40 +219,29 @@ module.exports = function(CodifiedLPPItem) {
    */
   CodifiedLPPItem.destroyAllInstances = function(cb) {
 
-    cb = (typeof cb === 'function')? cb: function() {};
-
     CodifiedLPPItem.destroyAll(null, function(err) {
       cb(null);
     });
   };
 
-  /**
-   * Overwrite the default get to provide relations data too.
-   * @param cb
-   */
-  CodifiedLPPItem.getAllInstances = function(cb) {
+  // Overrides the find function
+  CodifiedLPPItem.on('attached', function() {
 
-    cb = (typeof cb === 'function')? cb: function() {};
+    var overridden = CodifiedLPPItem.find;
+    CodifiedLPPItem.find = function(filter, callback) {
 
-    CodifiedLPPItem.find({
-        limit: 2,
-        include: {
-          relation: 'prices',
-          scope: {
-            fields: ['id', 'price', 'dateBegin', 'dateEnd']
-          }
+      filter = filter || {};
+      filter.include = {
+        relation: 'prices',
+        scope: {
+          fields: ['id', 'price', 'dateBegin', 'dateEnd']
         }
-      },
-      function(err, instances) {
+      };
+      arguments[0] = filter;
 
-        if (err) {
-          cb(err);
-        } else {
-          cb(null, instances);
-        }
-      }
-    );
-  };
+      return overridden.apply(this, arguments);
+    };
+  });
 
   /**
    * Remote hook: return the source file.
@@ -273,11 +260,6 @@ module.exports = function(CodifiedLPPItem) {
     accessType: 'WRITE',
     accepts: {arg: 'where', type: 'object', description: 'filter.where object'},
     http: {verb: 'del', path: '/'}
-  });
-
-  CodifiedLPPItem.remoteMethod('getAllInstances', {
-    http: {path: '/test', verb: 'get'},
-    returns: {arg: 'entities', type: 'Array'}
   });
 
   CodifiedLPPItem.remoteMethod('getSourceFileInfo', {
