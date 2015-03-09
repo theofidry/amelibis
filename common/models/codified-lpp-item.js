@@ -217,10 +217,12 @@ module.exports = function(CodifiedLPPItem) {
    *
    * @param {!remoteMethodCallback} cb
    */
-  CodifiedLPPItem.destroyAllInstances = function(cb) {
+  CodifiedLPPItem.destroyAllInstances = function(params, cb) {
 
-    CodifiedLPPItem.destroyAll(null, function(err) {
-      cb(null);
+    console.log(params);
+
+    CodifiedLPPItem.destroyAll(params, function(err) {
+      cb(err, null);
     });
   };
 
