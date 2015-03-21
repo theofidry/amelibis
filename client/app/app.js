@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('app', [
+    'codified-lpp-item',
     'lbServices',
-    'lumx',
-    'codified-lpp-item'
+    'lumx'
 ]);
 //.config([
 //  '$stateProvider',

@@ -218,7 +218,8 @@ module.exports = function(CodifiedLPPItem) {
       filter.include = {
         relation: 'prices',
         scope: {
-          fields: ['id', 'price', 'dateBegin', 'dateEnd']
+          fields: ['id', 'price', 'dateBegin', 'dateEnd'],
+          order: 'dateBegin DESC'
         }
       };
       arguments[0] = filter;
