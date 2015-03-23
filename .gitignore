@@ -1,3 +1,6 @@
+# Bower components
+client/components
+
 # Upload file dir
 server/files
 client/files
