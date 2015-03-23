@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<!-- define angular app -->
+<html ng-app="scotchApp">
+
+<head>
+    <!-- SCROLLS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
+
+    <!-- SPELLS -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/velocity/velocity.js"></script>
+    <script src="bower_components/moment/min/moment-with-locales.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/lumx/dist/lumx.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="app/app.js"></script>
+    <!--<script src="app/lb-services.js"></script>-->
+    <!--<script src="app/components/codified-lpp-item/codified-lpp-item.js"></script>-->
+</head>
+
+<!-- define angular controller -->
+<body ng-controller="mainController">
+
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Angular Routing Example</a>
+            </div>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+                <li><a href="#about"><i class="fa fa-shield"></i> About</a></li>
+                <li><a href="#contact"><i class="fa fa-comment"></i> Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="main">
+
+        <!-- angular templating -->
+        <!-- this is where content will be injected -->
+        <div ng-view></div>
+
+    </div>
+
+    <footer class="text-center">
+        <p>View the tutorial on <a href="http://scotch.io/tutorials/javascript/single-page-apps-with-angularjs-routing-and-templating">Scotch.io</a></p>
+
+        <p>View a tutorial on <a href="http://scotch.io/tutorials/javascript/animating-angularjs-apps-ngview">Animating Your Angular Single Page App</a></p>
+    </footer>
+
+</body>
+
+</html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+    <!--<meta charset="utf-8">-->
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge">-->
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <!--<title>Bootstrap 101 Template</title>-->
+
+    <!--&lt;!&ndash; Head &ndash;&gt;-->
+    <!--<link rel="stylesheet" href="bower_components/lumx/dist/lumx.css">-->
+    <!--<link rel="stylesheet" href="bower_components/mdi/css/materialdesignicons.css">-->
+    <!--<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700">-->
+
+    <!--<script src="bower_components/jquery/dist/jquery.js"></script>-->
+    <!--<script src="bower_components/velocity/velocity.js"></script>-->
+    <!--<script src="bower_components/moment/min/moment-with-locales.js"></script>-->
+    <!--<script src="bower_components/angular/angular.js"></script>-->
+    <!--<script src="bower_components/angular-route/angular-route.js"></script>-->
+    <!--<script src="bower_components/lumx/dist/lumx.js"></script>-->
+    <!--<script src="bower_components/angular-resource/angular-resource.js"></script>-->
+    <!--<script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>-->
+    <!--<script src="app/app.js"></script>-->
+    <!--<script src="app/lb-services.js"></script>-->
+    <!--<script src="app/components/codified-lpp-item/codified-lpp-item.js"></script>-->
+<!--</head>-->
+<!--<body ng-app="app">-->
+    <!--<ng-include src="'views/includes/header.html'"></ng-include>-->
+
+    <!--<div ng-view></div>-->
+<!--</body>-->
+<!--</html>-->
