@@ -1,0 +1,78 @@
+<ul>
+    <li><a href="#/lpp/new">New</a></li>
+</ul>
+
+<!--<table class="table movietable">-->
+    <!--<tr>-->
+        <!--<td><h3>All Movies</h3></td>-->
+        <!--<td></td>-->
+    <!--</tr>-->
+    <!--<tr ng-repeat="movie in movies">-->
+        <!--<td>{{movie.title}}</td>-->
+        <!--<td>-->
+            <!--<a class="btn btn-primary" ui-sref="viewMovie({id:movie._id})">View</a>-->
+            <!--<a class="btn btn-danger"  ng-click="deleteMovie(movie)">Delete</a>-->
+        <!--</td>-->
+    <!--</tr>-->
+<!--&lt;!&ndash;</table>&ndash;&gt;-->
+
+    <!--<ul>-->
+        <!--<li><a ui-sref="newMovie">Add New</a></li>-->
+    <!--</ul>-->
+
+<div class="data-table-container">
+    <!--<div ng-repeat="lppItem in lpp">-->
+    <!--<pre>{{ lppItem | json }}</pre>-->
+    <!--</div>-->
+    <table class="data-table data-table--has-primary data-table--has-secondary">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Code</th>
+            <th>Classification</th>
+            <th>Prix</th>
+            <th colspan="2">Dates de validité</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="4" class="divider divider--dark"></td>
+        </tr>
+        </thead>
+        <tbody ng-repeat="lppItem in ::lpp" ng-init="pricesSize = lppItem.prices.length">
+        <tr class="data-table__clickable-row">
+            <td>
+                <span>{{ $index }}</span>
+            </td>
+            <td>
+                {{ lppItem.code }}
+            </td>
+            <td>
+                {{ lppItem.classification }}
+            </td>
+            <td>
+                {{ (lppItem.prices[0].price | currency: '€') || 'N/A' }}
+            </td>
+            <td>
+                {{ lppItem.prices[0].dateBegin | date:'d/MM/yyyy' }}
+            </td>
+            <td>
+                {{ lppItem.prices[0].dateEnd | date:'d/MM/yyyy' }}
+            </td>
+            <td>
+                <lx-dropdown position="right" from-top>
+                    <button class="btn btn--l btn--black btn--icon" lx-ripple lx-dropdown-toggle>
+                        <i class="mdi mdi-dots-vertical"></i>
+                    </button>
+
+                    <lx-dropdown-menu>
+                        <ul>
+                            <li><a class="dropdown-link" href="#/lpp/{{ lppItem.code }}">Détails</a></li>
+                        </ul>
+                    </lx-dropdown-menu>
+                </lx-dropdown>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
